@@ -9,13 +9,16 @@ public class MusicPlayer : MonoBehaviour
     public AudioSource SourceAudio;
     public InputField NumberPlaysInput;
     public Text NumberPlaysText;
+    public Text CurrentCountText;
     public int numberOfPlays;
+    private Coroutine SongCoroutine;
 
         // Start is called before the first frame update
         void Start()
     {
         Screen.fullScreen = false;
         NumberPlaysText.text = "Number of Plays: " + numberOfPlays.ToString();
+        CurrentCountText.text = "Current play: 0";
     }
 
     IEnumerator PlaySong ()
@@ -23,6 +26,7 @@ public class MusicPlayer : MonoBehaviour
         for (int i = 0; i < numberOfPlays; i++)
         {
             SourceAudio.PlayOneShot(Song);
+            CurrentCountText.text = "Current play: " + (1 + i).ToString();
             yield return new WaitForSeconds(Song.length);
         }
         //Application.Quit();
@@ -36,11 +40,12 @@ public class MusicPlayer : MonoBehaviour
 
     public void PlayButton()
     {
-        StartCoroutine(PlaySong());
+        SongCoroutine = StartCoroutine(PlaySong());
     }
 
     public void StopButton()
     {
+        StopCoroutine(SongCoroutine);
         SourceAudio.Stop();
     }
 
