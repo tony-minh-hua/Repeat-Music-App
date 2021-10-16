@@ -25,7 +25,7 @@ public class MusicPlayer : MonoBehaviour
             SourceAudio.PlayOneShot(Song);
             yield return new WaitForSeconds(Song.length);
         }
-        Application.Quit();
+        //Application.Quit();
     }
 
     public void NumberOfPlaysInput()
@@ -37,6 +37,11 @@ public class MusicPlayer : MonoBehaviour
     public void PlayButton()
     {
         StartCoroutine(PlaySong());
+    }
+
+    public void StopButton()
+    {
+        SourceAudio.Stop();
     }
 
     public void QuitAppButton()
