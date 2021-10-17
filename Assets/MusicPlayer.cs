@@ -13,6 +13,9 @@ public class MusicPlayer : MonoBehaviour
     public int numberOfPlays;
     private Coroutine SongCoroutine;
 
+    public static float CurrentTrackTime;
+    public static int RemainingNumberPlays;
+
         // Start is called before the first frame update
         void Start()
     {
@@ -25,11 +28,28 @@ public class MusicPlayer : MonoBehaviour
     {
         for (int i = 0; i < numberOfPlays; i++)
         {
-            SourceAudio.PlayOneShot(Song);
+            RemainingNumberPlays = numberOfPlays - i;
+            SourceAudio.clip = Song;
+            SourceAudio.Play();
             CurrentCountText.text = "Current play: " + (1 + i).ToString();
             yield return new WaitForSeconds(Song.length);
         }
         //Application.Quit();
+        
+    }
+
+    IEnumerator ResumeSong()
+    {
+        int playCount = RemainingNumberPlays;
+        for (int i = 0; i < playCount; i++)
+        {
+            RemainingNumberPlays = numberOfPlays - i;
+            SourceAudio.PlayScheduled(CurrentTrackTime);
+            CurrentCountText.text = "Current play: " + (1 + i).ToString();
+            yield return new WaitForSeconds(Song.length);
+        }
+        //Application.Quit();
+
     }
 
     public void NumberOfPlaysInput()
@@ -49,6 +69,20 @@ public class MusicPlayer : MonoBehaviour
         SourceAudio.Stop();
     }
 
+    public void PauseButton()
+    {
+        if (SourceAudio.isPlaying == true)
+        {
+            CurrentTrackTime = SourceAudio.time;
+            
+            SourceAudio.Stop();
+        } else
+        {
+            
+            SongCoroutine = StartCoroutine(ResumeSong());
+        }
+    }
+
     public void QuitAppButton()
     {
         Application.Quit();
@@ -64,6 +98,5 @@ public class MusicPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 }
